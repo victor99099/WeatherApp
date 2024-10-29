@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id">923862509191-lss5f0b0vs8itucpv0o2enc4j12qmrtk.apps.googleusercontent.com</string>
+    <string name="default_client_id">923862509191-bsqm7qiq9m76j9u61btbk3daoo1cav9r.apps.googleusercontent.com</string>
+    <bool name="request_email">true</bool>
+    <bool name="request_id">true</bool>
+</resources>
