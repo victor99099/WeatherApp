@@ -78,10 +78,8 @@ class WeatherController extends GetxController {
       
 
       if(response.statusCode == 200){
-        // final decodedResponse = jsonDecode(response.body);
-        // print(decodedResponse);
+
         final List<dynamic> forecastData = jsonDecode(response.body);
-        // print(response.body);
 
         for(var entry in forecastData){
           WeatherModel weatherdata = WeatherModel.fromJson(entry);
@@ -104,16 +102,13 @@ class WeatherController extends GetxController {
 
   Future<List<WeatherModel>> getFavWeatherData() async {
     clearFavWeatherData();
-    print("Cleard on fetch"+ "${weatherList.length}");
     await fetchFavoritesWeather();
-    print("returning list "+ "${weatherList.length}");
     return favoriteWeatherList.toList();
   }
 
   Future<void> fetchFavoritesWeather() async {
     UserController userController = Get.find<UserController>();
     final Fav_Length = userController.user.value!.favorites.length;
-    print(userController.user.value!.favorites.length);
    try{
     for(var i=0;i<Fav_Length;i++){
       await fetchFav(userController.user.value!.favorites[i]);
@@ -123,7 +118,7 @@ class WeatherController extends GetxController {
     print("Error fetching all favorites : $error");
    } 
   }
-  
+  //based on city
   Future<void> fetchFav(String city) async {
     try{
       final response = await http.get(Uri.parse("http://${AppConstant.domain}/weather/today?city=$city"));

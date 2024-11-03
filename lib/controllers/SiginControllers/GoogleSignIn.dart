@@ -81,6 +81,10 @@ class GoogleAuthService {
         await cognitoUser.signOut();
         print('User signed out from Cognito.');
       }
+
+      final response = await http.get(
+        Uri.parse('http://${AppConstant.domain}/auth/logout?username=${userController.user.value!.username}'));
+
       userController.clearUser();
     }catch(error){
       print('Error during logout: $error');

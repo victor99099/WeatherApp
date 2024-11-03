@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
 
 import '../../models/UserModel.dart';
+import '../../utils/Themes.dart';
 
 class VerifyController extends GetxController {
   Future<bool> verify(String code) async {
@@ -24,7 +25,7 @@ class VerifyController extends GetxController {
         'verificationCode': code,
       });
       final response = await http.post(
-          Uri.parse("http://192.168.18.8:3000/auth/verify"),
+          Uri.parse("http://${AppConstant.domain}/auth/verify"),
           headers: {'Content-Type': 'application/json'},
           body: body);
 
@@ -68,7 +69,7 @@ class VerifyController extends GetxController {
       print("pressed");
       final body = jsonEncode({'username' : old_user.username});
       final response = await http.post(
-          Uri.parse("http://192.168.18.8:3000/auth/resend-code"),
+          Uri.parse("http://${AppConstant.domain}/auth/resend-code"),
           headers: {'Content-Type': 'application/json'},
           body: body);
       final responseData = jsonDecode(response.body);

@@ -6,6 +6,7 @@ import 'package:weatherapp/controllers/weathrControllers/coordinates.dart';
 import 'package:weatherapp/controllers/weathrControllers/dateTime.dart';
 import 'package:weatherapp/screens/mainScreems/mainScreen.dart';
 
+import '../../controllers/GlobalFunctions.dart';
 import '../../controllers/SiginControllers/GoogleSignIn.dart';
 import '../../controllers/UserDataaController.dart';
 import '../../controllers/weathrControllers/WeatherController.dart';
@@ -22,6 +23,11 @@ class GoogleAndFb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WeatherController weatherController =
+                     Get.put(WeatherController());
+    CoordinatesController coordinatesController =
+                    Get.put(CoordinatesController());
+    
     final UserController userController = Get.find<UserController>();
     final GoogleAuthService authService = GoogleAuthService();
     return Row(
@@ -30,43 +36,47 @@ class GoogleAndFb extends StatelessWidget {
         TextButton(
           onPressed: () async {
             try {
+              EasyLoading.show();
               await authService.initiateGoogleSignIn(context);
               final user = userController.user.value;
               if (user != null) {
                 print("username is : " + user.username);
-                // This prints the username from the signed-in user
-                CoordinatesController coordinatesController = Get.put(CoordinatesController());
-                Coord coord = await coordinatesController.fetchcoord(user.favorites[0]); 
-                 DateTimeController dateTimeController =
-                  await Get.put(DateTimeController(user.favorites[0]));
-              await dateTimeController.getDateTimeOfCity(coord);
-                WeatherController weatherController =
-                    await Get.put(WeatherController());
-                final List<WeatherModel> weatherData = 
-                    await 
-                    weatherController.getWeatherData(user.favorites[0]);
-                
-                print(weatherData.length);
-                Get.off(() => MainScreen(dateTimeController: dateTimeController,weatherData : weatherData, coord : coord, city: user.favorites[0],)); // Navigate to the intro screen
+                Coord coord =
+                    await coordinatesController.fetchcoord(user.favorites[0]);
+                DateTimeController dateTimeController =
+                    Get.put(DateTimeController(user.favorites[0]));
+                await dateTimeController.getDateTimeOfCity(coord);
+                final List<WeatherModel> weatherData =
+                    await weatherController.getWeatherData(user.favorites[0]);
+                final currentdatetime =
+                    dateTimeController.getCurrentDateTime(coord);
+                final isNight = updateCurrentTime(currentdatetime);
+                EasyLoading.dismiss();
+                Get.off(() => MainScreen(
+                  isNight: isNight,
+                      dateTimeController: dateTimeController,
+                      weatherData: weatherData,
+                      coord: coord,
+                      city: user.favorites[0],
+                    )); // Navigate to the intro screen
               }
+              EasyLoading.dismiss();
             } catch (error) {
               print("Error Signing In: $error");
+              EasyLoading.dismiss();
             }
           },
           child: Container(
             width: Get.width * 0.25,
             height: Get.height * 0.09,
             child: Card(
-              elevation: 2,
-              color: currentTheme.cardColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              child: Image.asset(
-                "assets/google.png",
-
-              )
-                  
-            ),
+                elevation: 2,
+                color: currentTheme.cardColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                child: Image.asset(
+                  "assets/google.png",
+                )),
           ),
         ),
         20.widthBox,
@@ -74,16 +84,13 @@ class GoogleAndFb extends StatelessWidget {
           width: Get.width * 0.25,
           height: Get.height * 0.09,
           child: Card(
-            elevation: 2,
-            color: currentTheme.cardColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: Image.asset(
-              "assets/Fb.png",
-              
-            )
-                
-          ),
+              elevation: 2,
+              color: currentTheme.cardColor,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              child: Image.asset(
+                "assets/Fb.png",
+              )),
         ),
       ],
     );

@@ -1,3 +1,5 @@
+import 'package:weatherapp/controllers/GlobalFunctions.dart';
+
 class User {
   final String username;
   final String email;
@@ -20,7 +22,7 @@ class User {
   return User(
     username: json['username'] ?? '', // Default to empty string if null
     email: json['email'] ?? 'No email provided', // Provide a default if null
-    favorites: List<String>.from(json['favorites'] ?? []), // Handle empty or null favorites
+    favorites: List<String>.from(json['favorites']?.map((city)=>capitalizeFirstLetter(city).trim()) ?? []), // Handle empty or null favorites
     unit: json['unit'] ?? 'Celsius', // Default to 'Celsius' if null
     createdAt: json['createdAt'] ?? 0, // Default to 0 if null (or a reasonable default)
     verificationStatus: json['verificationStatus'] ?? false, // Default to false if null
