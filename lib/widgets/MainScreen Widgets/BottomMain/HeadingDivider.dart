@@ -22,7 +22,7 @@ class MainScreenHeadingDivider extends StatelessWidget {
               fontFamily: GoogleFonts.poppins().fontFamily,
               color: currentTheme.primaryColor),
         ).pOnly(top: 20),
-        Divider(
+        const Divider(
           indent: 30,
           endIndent: 30,
         ),

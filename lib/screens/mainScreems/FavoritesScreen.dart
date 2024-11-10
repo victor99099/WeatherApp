@@ -1,20 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:weatherapp/controllers/AddFavController.dart';
 import 'package:weatherapp/controllers/FavCountryController.dart';
-import 'package:weatherapp/controllers/SiginControllers/SignupController.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:weatherapp/controllers/weathrControllers/WeatherController.dart';
 import 'package:weatherapp/models/weatherModel.dart';
 import 'package:weatherapp/screens/mainScreems/mainScreen.dart';
-import 'package:weatherapp/utils/Themes.dart';
 
 import '../../controllers/GlobalFunctions.dart';
 import '../../controllers/weathrControllers/coordinates.dart';
@@ -164,13 +160,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                         CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "Add to Favorites",
                                         style: TextStyle(
                                             fontSize: 16, color: Colors.white),
                                       ),
                                       20.widthBox,
-                                      Icon(
+                                      const Icon(
                                         Iconsax.heart_add,
                                         color: Colors.white,
                                       ),
@@ -182,11 +178,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       });
                 });
           },
-          child: Text(
+          backgroundColor: currentTheme.shadowColor,
+          child: const Text(
             "+",
             style: TextStyle(color: Colors.white, fontSize: 25),
           ),
-          backgroundColor: currentTheme.shadowColor,
         ).pOnly(right: 10, bottom: 10),
         backgroundColor: currentTheme.canvasColor,
         appBar: AppBar(
@@ -212,28 +208,28 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     content: Padding(
                       padding: const EdgeInsets.all(0),
                       child: Container(
-                        margin: EdgeInsets.all(0),
+                        margin: const EdgeInsets.all(0),
                         height: Get.height / 7.5,
-                        child: Row(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red,
+                        ),
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.delete, color: Colors.white),
                             // SizedBox(width: 8),
                           ],
                         ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.red,
-                        ),
                       ),
                     ),
                     widthSpace: Get.width / 3,
                     color: Colors.transparent,
                     onTap: (handler) async {
-                      if (widget.favWeatherList.length == 1)
+                      if (widget.favWeatherList.length == 1) {
                         Get.snackbar(
                             "Error", "Atleast one favorite should be there");
-                      else {
+                      } else {
                         EasyLoading.show();
                         await addFavController.removeFavorite(
                             widget.favWeatherList[index].city.toUpperCase());
@@ -252,7 +248,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ],
                 key: ObjectKey(widget.favWeatherList[index].city),
                 child: Container(
-                  padding: EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.only(left: 15, right: 15),
                   width: Get.width * 0.8,
                   height: Get.height * 0.15,
                   child: Card(

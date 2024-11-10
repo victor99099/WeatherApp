@@ -39,12 +39,12 @@ class BottomMain extends StatelessWidget {
           decoration: BoxDecoration(
             color: currentTheme.canvasColor,
             border: Border.all(color: Colors.transparent, width: 2),
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(35),
                 topRight: Radius.circular(35)),
           ),
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Column(children: [
               MainScreenHeadingDivider(
                 currentTheme: currentTheme,
@@ -58,7 +58,7 @@ class BottomMain extends StatelessWidget {
               ),
               MainScreenHeadingDivider(
                   currentTheme: currentTheme, text: "Weather Details"),
-              Container(
+              SizedBox(
                 height: Get.height * 0.25,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -66,20 +66,18 @@ class BottomMain extends StatelessWidget {
                     WeatherDetailBox(
                       currentTheme: currentTheme,
                       todayWeather:
-                          todayWeather.humidity.toStringAsFixed(0) + "%",
+                          "${todayWeather.humidity.toStringAsFixed(0)}%",
                       name: "Humidity",
                     ),
                     WeatherDetailBox(
                         currentTheme: currentTheme,
                         todayWeather:
-                            todayWeather.windSpeed.toStringAsFixed(0) +
-                                "2Km/h",
+                            "${todayWeather.windSpeed.toStringAsFixed(0)}2Km/h",
                         name: "Wind Speed"),
                     WeatherDetailBox(
                         currentTheme: currentTheme,
                         todayWeather:
-                            todayWeather.pressure.toStringAsFixed(0) +
-                                "2Km/h",
+                            "${todayWeather.pressure.toStringAsFixed(0)}2Km/h",
                         name: "Pressure"),
                   ],
                 ),

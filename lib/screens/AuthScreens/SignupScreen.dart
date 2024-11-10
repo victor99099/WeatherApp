@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:weatherapp/controllers/SiginControllers/GoogleSignIn.dart';
 import 'package:weatherapp/controllers/SiginControllers/SignupController.dart';
 import 'package:weatherapp/screens/AuthScreens/SignInScreen.dart';
-import 'package:weatherapp/screens/AuthScreens/intro.dart';
 import 'package:weatherapp/screens/AuthScreens/verificationScreen.dart';
 import 'package:weatherapp/widgets/Auth%20Widgets/CityField.dart';
 import 'package:weatherapp/widgets/Auth%20Widgets/Divider.dart';
@@ -35,7 +33,7 @@ class SignUp extends StatelessWidget {
     SignUpController signUpController = Get.put(SignUpController());
 
     return SingleChildScrollView(
-      physics: PageScrollPhysics(),
+      physics: const PageScrollPhysics(),
       child: Expanded(
         child: Material(
           color: currentTheme.canvasColor,
@@ -83,8 +81,8 @@ class SignUp extends StatelessWidget {
                             email.text,
                             city.text,
                             password.text);
-                        if (!check) {
-                          Get.to(() => VerificationScreen());
+                        if (check) {
+                          Get.to(() => const VerificationScreen());
                         }
                       },
                       text: "Sign Up")

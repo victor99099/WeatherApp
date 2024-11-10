@@ -1,7 +1,6 @@
 // controllers/weather_controller.dart
 import 'dart:convert';
 
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:http/http.dart' as http;
@@ -63,7 +62,7 @@ class WeatherController extends GetxController {
       }
     } catch (error) {
       print("forecase error : $error");
-      Get.snackbar('Error', "${error}", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', "$error", snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -98,11 +97,11 @@ class WeatherController extends GetxController {
 
   Future<void> fetchFavoritesWeather() async {
     UserController userController = Get.find<UserController>();
-    final Fav_Length = userController.user.value!.favorites.length;
+    final favLength = userController.user.value!.favorites.length;
     try {
       List<Future<void>> futures = [];
 
-      for (var i = 0; i < Fav_Length; i++) {
+      for (var i = 0; i < favLength; i++) {
         futures.add(fetchFav(userController.user.value!.favorites[i]));
       }
 
@@ -128,7 +127,7 @@ class WeatherController extends GetxController {
       }
     } catch (error) {
       print("forecase error : $error");
-      Get.snackbar('Error', "${error}", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', "$error", snackPosition: SnackPosition.BOTTOM);
     }
   }
 }

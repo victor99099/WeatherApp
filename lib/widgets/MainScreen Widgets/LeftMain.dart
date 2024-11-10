@@ -22,7 +22,7 @@ class LeftMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: Get.width * 0.41,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +46,7 @@ class LeftMain extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(todayWeather.temperature.toStringAsFixed(0) + "°C",
+              Text("${todayWeather.temperature.toStringAsFixed(0)}°C",
                       style: TextStyle(
                           fontSize: 33,
                           fontFamily: GoogleFonts.poppins().fontFamily,
@@ -86,7 +86,7 @@ class LeftMain extends StatelessWidget {
                     fontFamily: GoogleFonts.poppins().fontFamily,
                     color: Colors.white),
               ),
-              Icon(
+              const Icon(
                 Iconsax.cloud,
                 color: Colors.white,
                 size: 18,
@@ -102,7 +102,7 @@ class LeftMain extends StatelessWidget {
                 color: Colors.white),
           ).pOnly(top: Get.width * 0.03),
           Text(
-            todayWeather.feelsLike.toStringAsFixed(0) + " °C",
+            "${todayWeather.feelsLike.toStringAsFixed(0)} °C",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

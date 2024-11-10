@@ -12,7 +12,7 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: Get.width,
       height: Get.height*0.1,
       child : currentTheme.primaryColor == const Color(0xFFD6D6D6)

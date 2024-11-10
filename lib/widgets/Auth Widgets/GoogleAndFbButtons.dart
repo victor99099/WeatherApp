@@ -11,7 +11,6 @@ import '../../controllers/SiginControllers/GoogleSignIn.dart';
 import '../../controllers/UserDataaController.dart';
 import '../../controllers/weathrControllers/WeatherController.dart';
 import '../../models/weatherModel.dart';
-import '../../screens/AuthScreens/intro.dart';
 
 class GoogleAndFb extends StatelessWidget {
   const GoogleAndFb({
@@ -40,7 +39,7 @@ class GoogleAndFb extends StatelessWidget {
               await authService.initiateGoogleSignIn(context);
               final user = userController.user.value;
               if (user != null) {
-                print("username is : " + user.username);
+                print("username is : ${user.username}");
                 Coord coord =
                     await coordinatesController.fetchcoord(user.favorites[0]);
                 DateTimeController dateTimeController =
@@ -66,7 +65,7 @@ class GoogleAndFb extends StatelessWidget {
               EasyLoading.dismiss();
             }
           },
-          child: Container(
+          child: SizedBox(
             width: Get.width * 0.25,
             height: Get.height * 0.09,
             child: Card(
@@ -80,7 +79,7 @@ class GoogleAndFb extends StatelessWidget {
           ),
         ),
         20.widthBox,
-        Container(
+        SizedBox(
           width: Get.width * 0.25,
           height: Get.height * 0.09,
           child: Card(

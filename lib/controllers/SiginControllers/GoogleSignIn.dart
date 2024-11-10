@@ -76,13 +76,11 @@ class GoogleAuthService {
     try{
       await _googleSignIn.signOut();
       print('User signed out from Google.');
-      if(userController.user != null){
-        final cognitoUser = CognitoUser(userController.user.value!.username, userPool);
-        await cognitoUser.signOut();
-        print('User signed out from Cognito.');
-      }
-
-      final response = await http.get(
+      final cognitoUser = CognitoUser(userController.user.value!.username, userPool);
+      await cognitoUser.signOut();
+      print('User signed out from Cognito.');
+    
+      await http.get(
         Uri.parse('http://${AppConstant.domain}/auth/logout?username=${userController.user.value!.username}'));
 
       userController.clearUser();

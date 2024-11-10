@@ -1,9 +1,7 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:weatherapp/controllers/SiginControllers/verifyController.dart';
 import 'package:weatherapp/screens/AuthScreens/SignInScreen.dart';
@@ -40,7 +38,7 @@ class VerificationScreen extends StatelessWidget {
                   fontFamily: GoogleFonts.poppins().fontFamily,
                   fontWeight: FontWeight.bold),
             ).marginOnly(top: 10, left: 28),
-            Container(
+            SizedBox(
               width: Get.width * 0.75,
               child: Text("We have sent the verification code to your email",
                       style: TextStyle(

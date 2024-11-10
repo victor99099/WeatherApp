@@ -50,13 +50,13 @@ class _SplashscreenState extends State<Splashscreen> {
             color: currentTheme.shadowColor,
             width: Get.width,
             height: Get.height,
-            child: Center(
+            child: const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
                       color: Colors.white),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Text("Logging in ...",
                       style: TextStyle(
                         fontSize: 20,

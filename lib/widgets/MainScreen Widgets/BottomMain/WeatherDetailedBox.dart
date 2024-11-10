@@ -74,7 +74,7 @@ Icon getIconWeatherDetail(String name, BuildContext context) {
       );
 
     default:
-      return Icon(WeatherIcons.na,
+      return const Icon(WeatherIcons.na,
           color: Colors.black, size: iconSize); // icon for undefined weather
   }
 }

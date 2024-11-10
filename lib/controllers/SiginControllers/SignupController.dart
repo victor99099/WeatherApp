@@ -56,13 +56,13 @@ class SignUpController extends GetxController {
       } else {
         Get.snackbar('Error', responseData['error'],
             snackPosition: SnackPosition.BOTTOM);
-        print("Sign up failed : ${response.statusCode} - ${response.body}");
+        print("Sign up failed : ${response.body}");
         return false;
       }
     } catch (error) {
-      Get.snackbar('Error', "${error}",
+      Get.snackbar('Error', "$error",
           snackPosition: SnackPosition.BOTTOM);
-      print('Error Signup login : $error');
+      print('Error Signup : $error');
       return false;
     }
   }

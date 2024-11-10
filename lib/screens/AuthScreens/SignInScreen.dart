@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,6 @@ import 'package:weatherapp/controllers/GlobalFunctions.dart';
 import 'package:weatherapp/controllers/SiginControllers/NormalSignin.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:weatherapp/screens/AuthScreens/SignupScreen.dart';
-import 'package:weatherapp/screens/AuthScreens/intro.dart';
 import '../../controllers/UserDataaController.dart';
 import '../../controllers/weathrControllers/WeatherController.dart';
 import '../../controllers/weathrControllers/coordinates.dart';
@@ -23,11 +21,19 @@ import '../../widgets/Auth Widgets/UsernameField.dart';
 import '../../widgets/General/MainButton.dart';
 import '../mainScreems/mainScreen.dart';
 
-class LogInScreen extends StatelessWidget {
+class LogInScreen extends StatefulWidget {
   LogInScreen({super.key});
-  LoginController loginController = Get.put(LoginController());
-  TextEditingController username = TextEditingController();
-  TextEditingController password = TextEditingController();
+
+  @override
+  State<LogInScreen> createState() => _LogInScreenState();
+}
+
+class _LogInScreenState extends State<LogInScreen> {
+  final LoginController loginController = Get.put(LoginController());
+
+  final TextEditingController username = TextEditingController();
+
+  final TextEditingController password = TextEditingController();
 
   RxBool isPassVisible = true.obs;
 
@@ -90,7 +96,7 @@ class LogInScreen extends StatelessWidget {
                                 username.text, password.text);
                             final user = userController.user.value;
                             if (user != null) {
-                              print("username is : " + user.username);
+                              print("username is : ${user.username}");
                               // This prints the username from the signed-in user
 
                               Coord coord = await coordinatesController
@@ -133,7 +139,7 @@ class LogInScreen extends StatelessWidget {
                   firstText: "Not registered yet? ",
                   currentTheme: currentTheme,
                   onTap: () {
-                    Get.to(() => SignUp());
+                    Get.to(() => const SignUp());
                   },
                 ).marginOnly(top: Get.width * 0.08)
               ],

@@ -10,7 +10,7 @@ class Coord{
 class CoordinatesController extends GetxController{
   Future<Coord> fetchcoord(String city) async{
     
-    final response = await http.get(Uri.parse("https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=0571fc40afe0f77bb8737158022c23e5&units=metric"));
+    final response = await http.get(Uri.parse("https://api.openweathermap.org/data/2.5/weather?q=$city&appid=0571fc40afe0f77bb8737158022c23e5&units=metric"));
 
     final responseData = jsonDecode(response.body);
     final coord = responseData['coord'];

@@ -17,7 +17,7 @@ class MainButton extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: Get.width*0.85,
       height: Get.height * 0.065,
       child: TextButton(

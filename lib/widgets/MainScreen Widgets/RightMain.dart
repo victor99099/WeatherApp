@@ -71,7 +71,7 @@ class RightMain extends StatelessWidget {
             ).marginOnly(top: 73, left: Get.width * 0.01)
           ],
         ),
-        Container(
+        SizedBox(
           width: Get.width * 0.3,
           height: Get.height * 0.2,
           child: Column(
@@ -79,13 +79,13 @@ class RightMain extends StatelessWidget {
               Sunriseset(
                 text: "Sunrise",
                 sun: todayWeather.sunrise,
-                icon: Icon(CupertinoIcons.sunrise),
+                icon: const Icon(CupertinoIcons.sunrise),
               ),
               20.heightBox,
               Sunriseset(
                   text: "Sunset",
                   sun: todayWeather.sunset,
-                  icon: Icon(CupertinoIcons.sunset)),
+                  icon: const Icon(CupertinoIcons.sunset)),
             ],
           ),
         ).marginOnly(left: Get.width * 0.11, top: 40)

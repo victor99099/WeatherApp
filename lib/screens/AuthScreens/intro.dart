@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:weatherapp/screens/AuthScreens/SignInScreen.dart';
 
 import '../../widgets/General/MainButton.dart';

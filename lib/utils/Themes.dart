@@ -19,9 +19,9 @@ class MyTheme {
 
   static ThemeData lightTheme(BuildContext context) => ThemeData(
     fontFamily: GoogleFonts.poppins().fontFamily,
-    primaryColorLight: Color.fromARGB(255, 190, 190, 190),
+    primaryColorLight: const Color.fromARGB(255, 190, 190, 190),
     primaryColorDark: Colors.black,
-    primaryColor: Color.fromARGB(255, 134, 133, 133),
+    primaryColor: const Color.fromARGB(255, 134, 133, 133),
     canvasColor: Colors.white,
     cardColor: Colors.white,
     highlightColor: const Color.fromARGB(255, 98, 46, 128),

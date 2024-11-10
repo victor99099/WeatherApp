@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -51,7 +50,7 @@ class LoginController extends GetxController {
       }
     }
     catch(error){
-      Get.snackbar('Error', "${error}",
+      Get.snackbar('Error', "$error",
           snackPosition: SnackPosition.BOTTOM);
       print('Error during login : $error');
       EasyLoading.dismiss();

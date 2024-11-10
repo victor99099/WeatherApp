@@ -16,7 +16,7 @@ class Sunriseset extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           CupertinoIcons.sunset,
           color: Colors.white,
           size: 25,

@@ -17,7 +17,7 @@ class VerifyCodeFields extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(6, (index) {
-        return Container(
+        return SizedBox(
           width: Get.width * 0.15,
           height: Get.height*0.09,
           child: Card(
@@ -29,7 +29,7 @@ class VerifyCodeFields extends StatelessWidget {
               textAlign: TextAlign.center, // Center the text
               keyboardType: TextInputType.number, // Numeric keyboard
               maxLength: 1, // Only allow 1 digit
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 counterText: '', // Remove the character counter
                 enabledBorder: OutlineInputBorder(

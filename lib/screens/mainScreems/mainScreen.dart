@@ -4,7 +4,6 @@ import 'package:weatherapp/controllers/FavCountryController.dart';
 import 'package:weatherapp/controllers/weathrControllers/coordinates.dart';
 import 'package:weatherapp/controllers/weathrControllers/dateTime.dart';
 import 'package:weatherapp/models/weatherModel.dart';
-import 'package:weatherapp/screens/AuthScreens/SignInScreen.dart';
 import '../../controllers/UserDataaController.dart';
 import '../../widgets/MainScreen Widgets/BottomMain.dart';
 import '../../widgets/MainScreen Widgets/LeftMain.dart';
@@ -16,7 +15,7 @@ class MainScreen extends StatefulWidget {
   final String city;
   final DateTimeController dateTimeController;
   final bool isNight;
-  MainScreen(
+  const MainScreen(
       {super.key,
       required this.weatherData,
       required this.coord,
@@ -55,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Stack(
             children: [
-              Container(
+              SizedBox(
                   width: Get.width,
                   height: Get.height * 0.45,
                   child: widget.isNight

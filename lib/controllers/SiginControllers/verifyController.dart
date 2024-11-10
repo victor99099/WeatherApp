@@ -12,8 +12,8 @@ class VerifyController extends GetxController {
   Future<bool> verify(String code) async {
     print("Function called");
     UserController userController = Get.find<UserController>();
-    User? old_user = userController.user.value;
-    if (old_user == null) {
+    User? oldUser = userController.user.value;
+    if (oldUser == null) {
       print("User not found in UserController.");
       Get.snackbar('Error', 'User not found. Please log in again.',
           snackPosition: SnackPosition.BOTTOM);
@@ -21,7 +21,7 @@ class VerifyController extends GetxController {
     }
     try {
       final body = jsonEncode({
-        'username': old_user.username,
+        'username': oldUser.username,
         'verificationCode': code,
       });
       final response = await http.post(
@@ -49,16 +49,16 @@ class VerifyController extends GetxController {
       }
     } catch (error) {
       print("Exception occured : $error");
-      Get.snackbar('Error', "${error}", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', "$error", snackPosition: SnackPosition.BOTTOM);
       return false;
     }
   }
 
   Future<void> resendCode() async {
     UserController userController = Get.find<UserController>();
-    User? old_user = userController.user.value;
+    User? oldUser = userController.user.value;
 
-    if (old_user == null) {
+    if (oldUser == null) {
       print("User not found in UserController.");
       Get.snackbar('Error', 'User not found. Please log in again.',
           snackPosition: SnackPosition.BOTTOM);
@@ -67,7 +67,7 @@ class VerifyController extends GetxController {
 
     try {
       print("pressed");
-      final body = jsonEncode({'username' : old_user.username});
+      final body = jsonEncode({'username' : oldUser.username});
       final response = await http.post(
           Uri.parse("http://${AppConstant.domain}/auth/resend-code"),
           headers: {'Content-Type': 'application/json'},

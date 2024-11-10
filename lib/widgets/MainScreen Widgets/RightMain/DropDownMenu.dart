@@ -31,14 +31,14 @@ class DropDownMenu extends StatelessWidget {
 
     List<String> cities = userController.user.value!.favorites;
     print(cities);
-    return Container(
+    return SizedBox(
       // color: currentTheme.cardColor,
       width: Get.width * 0.35,
       height: Get.height * 0.06,
       child: Obx(() {
         return DropdownButtonFormField<String>(
           borderRadius: BorderRadius.circular(25),
-          padding: EdgeInsets.all(0),
+          padding: const EdgeInsets.all(0),
 
           style: TextStyle(color: currentTheme.primaryColorDark, fontSize: 14),
           dropdownColor: currentTheme.cardColor,
@@ -71,20 +71,20 @@ class DropDownMenu extends StatelessWidget {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: Colors
                     .red, // Custom color for the bottom line when there's an error
                 width: 2.0,
               ),
             ),
-            contentPadding: EdgeInsets.only(left: 10, right: 10),
+            contentPadding: const EdgeInsets.only(left: 10, right: 10),
             fillColor: currentTheme.cardColor,
           ),
           value: sortOption.value,
           items: cities
               .map((option) => DropdownMenuItem<String>(
-                    child: Text(option),
                     value: option,
+                    child: Text(option),
                   ))
               .toList(),
           onChanged: (String? newValue) async {
