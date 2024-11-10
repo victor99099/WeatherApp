@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:weatherapp/screens/AuthScreens/intro.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,17 @@ void main() {
   tz.initializeTimeZones();
   Get.put(UserController());
   runApp(const MyApp());
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +36,7 @@ class MyApp extends StatelessWidget {
       theme: MyTheme.lightTheme(context),
       darkTheme: MyTheme.darkTheme(context),
       title: 'Weather Guy',
-      
+       builder: EasyLoading.init(),
       home: IntroScreen(),
     );
   }

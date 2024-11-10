@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:weatherapp/controllers/weathrControllers/coordinates.dart';
-import 'package:weatherapp/models/UserModel.dart';
 
 class currentDateTime {
   final String date;
@@ -18,38 +17,41 @@ class DateTimeController extends GetxController {
   final String city;
   DateTimeController(this.city);
 
-  CoordinatesController coordinatesController = Get.put(CoordinatesController());
+  CoordinatesController coordinatesController =
+      Get.put(CoordinatesController());
   UserController userController = Get.find<UserController>();
   @override
-  void onInit() async{
+  void onInit() async {
     super.onInit();
     Coord coord = await coordinatesController.fetchcoord(city);
     await getDateTimeOfCity(coord);
   }
-  
-  
-  currentDateTime getDateTime(int day, Coord coord)  {
-    final now =  DateTimeOfCity.value;
+
+  currentDateTime getDateTime(int day, Coord coord) {
+    final now = DateTimeOfCity.value;
+
+    // Add the number of days to the current date
+    final newDate = now.add(Duration(days: day));
 
     final dataFormater =
-        "${now.day + day}  ${_getMonthNameForecast(now.month)}";
+        "${newDate.day} ${_getMonthNameForecast(newDate.month)}";
 
     final timeFormater =
-        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+        "${newDate.hour.toString().padLeft(2, '0')}:${newDate.minute.toString().padLeft(2, '0')}";
 
-    print("Date time on getDateTime"+dataFormater + timeFormater);
+
     return currentDateTime(date: dataFormater, time: timeFormater);
   }
 
-  currentDateTime getCurrentDateTime(Coord coord)  {
-    final now =  DateTimeOfCity.value;
+  currentDateTime getCurrentDateTime(Coord coord) {
+    final now = DateTimeOfCity.value;
 
     final dataFormater =
         "${_getDayName(now.weekday)}, ${now.day} ${_getMonthName(now.month)}";
 
     final timeFormater =
         "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-        print("Date time on getcurrentDateTime"+dataFormater + timeFormater);
+
     return currentDateTime(date: dataFormater, time: timeFormater);
   }
 
@@ -103,27 +105,26 @@ class DateTimeController extends GetxController {
     return monthNames[month - 1]; // Adjust for zero-based index
   }
 
+  
+
   Future<void> getDateTimeOfCity(Coord coord) async {
-    print("lat : ${coord.lat}, long : ${coord.lon}");
+
     try {
       final response = await http.get(Uri.parse(
           "http://api.geonames.org/timezoneJSON?lat=${coord.lat}&lng=${coord.lon}&username=wahab_here_"));
       final responseData = jsonDecode(response.body);
-      print(responseData);
       if (response.statusCode == 200) {
         String StringTime = responseData['time'];
         DateTime dateTime = DateTime.parse(StringTime);
-        print("Date and time : $dateTime");
         DateTimeOfCity.value = dateTime;
       } else {
         Get.snackbar(
             "Error", "Error recieving data : ${responseData['error']}");
-        
       }
     } catch (error) {
       print("error while fetching date and time $error");
       Get.snackbar("Error", "Error recieving data : $error");
-      
     }
   }
+
 }

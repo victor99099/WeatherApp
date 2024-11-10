@@ -4,10 +4,16 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:weatherapp/controllers/GlobalFunctions.dart';
 import 'package:weatherapp/controllers/SiginControllers/NormalSignin.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:weatherapp/screens/AuthScreens/SignupScreen.dart';
 import 'package:weatherapp/screens/AuthScreens/intro.dart';
+import '../../controllers/UserDataaController.dart';
+import '../../controllers/weathrControllers/WeatherController.dart';
+import '../../controllers/weathrControllers/coordinates.dart';
+import '../../controllers/weathrControllers/dateTime.dart';
+import '../../models/weatherModel.dart';
 import '../../widgets/Auth Widgets/Divider.dart';
 import '../../widgets/Auth Widgets/GoogleAndFbButtons.dart';
 import '../../widgets/Auth Widgets/Logo.dart';
@@ -15,6 +21,7 @@ import '../../widgets/Auth Widgets/NotAndALreadySigned.dart';
 import '../../widgets/Auth Widgets/PassField.dart';
 import '../../widgets/Auth Widgets/UsernameField.dart';
 import '../../widgets/General/MainButton.dart';
+import '../mainScreems/mainScreen.dart';
 
 class LogInScreen extends StatelessWidget {
   LogInScreen({super.key});
@@ -26,6 +33,11 @@ class LogInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WeatherController weatherController =
+                                  Get.put(WeatherController());
+    CoordinatesController coordinatesController =
+        Get.put(CoordinatesController());
+    final UserController userController = Get.find<UserController>();
     final currentTheme = Theme.of(context);
     return Container(
       color: currentTheme.canvasColor,
@@ -44,19 +56,20 @@ class LogInScreen extends StatelessWidget {
               10.widthBox,
               ProfileIcon(currentTheme: currentTheme),
             ],
-          ).pOnly(top: Get.width*0.16, left: Get.width*0.04, bottom: Get.width*0.035),
+          ).pOnly(
+              top: Get.width * 0.16,
+              left: Get.width * 0.04,
+              bottom: Get.width * 0.035),
           Logo(currentTheme: currentTheme),
           Material(
             child: Column(
               children: [
-                UsernameField(username: username, currentTheme: currentTheme)
-                    ,
+                UsernameField(username: username, currentTheme: currentTheme),
                 10.heightBox,
                 PasswordField(
-                        isPassVisible: isPassVisible,
-                        password: password,
-                        currentTheme: currentTheme)
-                    ,
+                    isPassVisible: isPassVisible,
+                    password: password,
+                    currentTheme: currentTheme),
                 Container(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -66,19 +79,55 @@ class LogInScreen extends StatelessWidget {
                         color: currentTheme.primaryColorDark,
                         fontFamily: GoogleFonts.poppins().fontFamily,
                         fontSize: 12),
-                  ).pOnly(top: Get.width*0.015, right: Get.width*0.04),
+                  ).pOnly(top: Get.width * 0.015, right: Get.width * 0.04),
                 ),
                 MainButton(
                         currentTheme: currentTheme,
-                        onTap: () {
-                          
-                          loginController.login(username.text, password.text);
-                          
+                        onTap: () async {
+                          try {
+                            EasyLoading.show();
+                            await loginController.login(
+                                username.text, password.text);
+                            final user = userController.user.value;
+                            if (user != null) {
+                              print("username is : " + user.username);
+                              // This prints the username from the signed-in user
+
+                              Coord coord = await coordinatesController
+                                  .fetchcoord(user.favorites[0]);
+                              DateTimeController dateTimeController =
+                                  await Get.put(
+                                      DateTimeController(user.favorites[0]));
+                              await dateTimeController.getDateTimeOfCity(coord);
+                              
+                              final List<WeatherModel> weatherData =
+                                  await weatherController
+                                      .getWeatherData(user.favorites[0]);
+                              final currentdatetime =
+                                  dateTimeController.getCurrentDateTime(coord);
+                              final isNight =
+                                  updateCurrentTime(currentdatetime);
+                              print(weatherData.length);
+                              EasyLoading.dismiss();
+                              Get.off(() => MainScreen(
+                                    isNight: isNight,
+                                    dateTimeController: dateTimeController,
+                                    weatherData: weatherData,
+                                    coord: coord,
+                                    city: user.favorites[0],
+                                  )); // Navigate to the intro screen
+                            }
+                          } catch (error) {
+                            print("Error Signing In: $error");
+                            EasyLoading.dismiss();
+                          }
                         },
                         text: "Login")
-                    .marginOnly(top: Get.width*0.06),
-                OrSignInDivider(currentTheme: currentTheme).marginOnly(top: Get.width*0.06),
-                GoogleAndFb(currentTheme: currentTheme).marginOnly(top: Get.width*0.08),
+                    .marginOnly(top: Get.width * 0.06),
+                OrSignInDivider(currentTheme: currentTheme)
+                    .marginOnly(top: Get.width * 0.06),
+                GoogleAndFb(currentTheme: currentTheme)
+                    .marginOnly(top: Get.width * 0.08),
                 NotAndAlreadySigned(
                   seconfText: "Create Account",
                   firstText: "Not registered yet? ",
@@ -86,7 +135,7 @@ class LogInScreen extends StatelessWidget {
                   onTap: () {
                     Get.to(() => SignUp());
                   },
-                ).marginOnly(top: Get.width*0.08)
+                ).marginOnly(top: Get.width * 0.08)
               ],
             ),
           ).pOnly(top: 35, left: 12, right: 12),

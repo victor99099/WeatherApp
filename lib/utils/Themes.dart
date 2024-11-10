@@ -9,7 +9,7 @@ class AppConstant{
   static String AppMainName= "Weather Guy";
   static String AppPoweredBy = "Powered by wahab";
   static Color primary = const Color(0xFFD285FF);
-  static String domain = "192.168.18.37:3000";
+  static String domain = "13.201.190.230:3000";
 }
 
 

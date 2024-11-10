@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 import '../../models/UserModel.dart';
+import '../../utils/Themes.dart';
+import '../GlobalFunctions.dart';
 import '../UserDataaController.dart';
 
 class SignUpController extends GetxController {
@@ -31,7 +33,7 @@ class SignUpController extends GetxController {
 
     try {
       final response = await http.post(
-          Uri.parse('http://192.168.18.8:3000/auth/signup'),
+          Uri.parse('http://${AppConstant.domain}/auth/signup'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'username': username,
@@ -65,22 +67,5 @@ class SignUpController extends GetxController {
     }
   }
 
-  Future<bool> validateCity(String city) async {
-    final url =
-        'http://api.openweathermap.org/data/2.5/weather?q=$city&appid=0571fc40afe0f77bb8737158022c23e5';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        // City exists, and weather data is available
-        return true;
-      } else {
-        // City does not exist or invalid city name
-        return false;
-      }
-    } catch (error) {
-      print('Error validating city: $error');
-      return false;
-    }
-  }
+  
 }
