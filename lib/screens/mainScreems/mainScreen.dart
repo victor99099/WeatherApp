@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import 'package:weatherapp/controllers/FavCountryController.dart';
-
 import 'package:weatherapp/controllers/weathrControllers/coordinates.dart';
 import 'package:weatherapp/controllers/weathrControllers/dateTime.dart';
-
 import 'package:weatherapp/models/weatherModel.dart';
-
+import 'package:weatherapp/screens/AuthScreens/SignInScreen.dart';
 import '../../controllers/UserDataaController.dart';
 import '../../widgets/MainScreen Widgets/BottomMain.dart';
 import '../../widgets/MainScreen Widgets/LeftMain.dart';
@@ -52,43 +48,43 @@ class _MainScreenState extends State<MainScreen> {
     print(widget.isNight);
 
     return Scaffold(
+      // appBar: AppBar(backgroundColor: Colors.transparent,),
+      
       backgroundColor: currentTheme.canvasColor,
       body: Stack(
         children: [
-          Container(
-            child: Stack(
-              children: [
-                Container(
-                    width: Get.width,
-                    height: Get.height * 0.45,
-                    child: widget.isNight
-                        ? Image.asset(
-                            "assets/night.gif",
-                            fit: BoxFit.fill,
-                          )
-                        : Image.asset(
-                            "assets/day.gif",
-                            fit: BoxFit.fill,
-                          )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LeftMain(
-                        currentdatetime: currentdatetime,
-                        todayWeather: todayWeather,
-                        coord: widget.coord),
-                    RightMain(
-                        isNight: widget.isNight,
-                        favCountryController: favCountryController,
-                        currentTheme: currentTheme,
-                        sortOption: sortOption,
-                        widget: widget,
-                        todayWeather: todayWeather),
-                  ],
-                )
-              ],
-            ),
+          Stack(
+            children: [
+              Container(
+                  width: Get.width,
+                  height: Get.height * 0.45,
+                  child: widget.isNight
+                      ? Image.asset(
+                          "assets/night.gif",
+                          fit: BoxFit.fill,
+                        )
+                      : Image.asset(
+                          "assets/day.gif",
+                          fit: BoxFit.fill,
+                        )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LeftMain(
+                      currentdatetime: currentdatetime,
+                      todayWeather: todayWeather,
+                      coord: widget.coord),
+                  RightMain(
+                      isNight: widget.isNight,
+                      favCountryController: favCountryController,
+                      currentTheme: currentTheme,
+                      sortOption: sortOption,
+                      widget: widget,
+                      todayWeather: todayWeather),
+                ],
+              )
+            ],
           ),
           BottomMain(
               currentTheme: currentTheme,

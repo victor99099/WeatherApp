@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
+import 'package:weatherapp/screens/AuthScreens/SplashScreen.dart';
 import 'package:weatherapp/screens/AuthScreens/intro.dart';
 import 'package:get/get.dart';
 import 'utils/Themes.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       darkTheme: MyTheme.darkTheme(context),
       title: 'Weather Guy',
        builder: EasyLoading.init(),
-      home: IntroScreen(),
+      home: Splashscreen(),
     );
   }
 }

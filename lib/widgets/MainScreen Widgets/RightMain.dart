@@ -61,7 +61,7 @@ class RightMain extends StatelessWidget {
                     List<String> favCountryList = favCountryController.getFavCounties();
                     EasyLoading.dismiss();
                     Get.to(
-                        () => FavoritesScreen(favWeatherList: FavWeatherList, favCountryList:favCountryList,sortOption: sortOption,isNight: isNight,));
+                        () => FavoritesScreen(favWeatherList: FavWeatherList, favCountryList:favCountryList,sortOption: sortOption,isNight: isNight,),transition: Transition.rightToLeftWithFade);
                   },
                   icon: Icon(
                     Iconsax.heart_add,

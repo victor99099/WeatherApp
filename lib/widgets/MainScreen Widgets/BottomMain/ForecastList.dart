@@ -54,7 +54,7 @@ class ForecastList extends StatelessWidget {
                   Container(
                     width: Get.width * 0.5,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
@@ -120,6 +120,7 @@ Icon getIcon(String desc) {
     case "moderate rain":
     case "heavy rain":
     case "showers":
+    case "light shower rain":
       return Icon(WeatherIcons.rain, color: Colors.blue, size: iconSize);
 
     case "thunderstorm":

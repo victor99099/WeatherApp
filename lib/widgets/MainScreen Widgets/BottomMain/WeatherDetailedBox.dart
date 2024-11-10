@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:velocity_x/velocity_x.dart';
 import 'package:weather_icons/weather_icons.dart';
 
 class WeatherDetailBox extends StatelessWidget {
@@ -24,6 +25,7 @@ class WeatherDetailBox extends StatelessWidget {
         child: Column(
           children: [
             getIconWeatherDetail(name, context),
+            5.heightBox,
             Text(
               todayWeather,
               style: TextStyle(
@@ -32,6 +34,7 @@ class WeatherDetailBox extends StatelessWidget {
                   fontFamily: GoogleFonts.poppins().fontFamily,
                   color: currentTheme.primaryColorDark),
             ),
+            5.heightBox,
             Text(
               name,
               style: TextStyle(

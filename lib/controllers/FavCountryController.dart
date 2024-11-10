@@ -8,8 +8,7 @@ import 'package:weatherapp/controllers/weathrControllers/coordinates.dart';
 class FavCountryController extends GetxController {
   RxList<String> FavCountry = [''].obs;
 
-  List<String> getFavCounties(){
-
+  List<String> getFavCounties() {
     return FavCountry.toList();
   }
 
@@ -20,22 +19,37 @@ class FavCountryController extends GetxController {
         Get.put(CoordinatesController());
     try {
       FavCountry.clear();
-      for (var i = 0; i < user!.favorites.length; i++) {
-        Coord coord = await coordinatesController.fetchcoord(user.favorites[i]);
-        final response = await http.get(Uri.parse(
-            "http://api.geonames.org/timezoneJSON?lat=${coord.lat}&lng=${coord.lon}&username=wahab_here_"));
-        final responseData = jsonDecode(response.body);
-        if (response.statusCode == 200) {
-          final country = responseData["countryName"];
-          FavCountry.add(country);
-        } else {
-          Get.snackbar(
-              "Error", "Error recieving data : ${responseData['error']}");
-        }
+
+      List<Future<void>> futures = [];
+
+      for (var favorite in user!.favorites) {
+        futures.add(fetchCountryForFavorites(favorite, coordinatesController));
       }
+
+      await Future.wait(futures);
     } catch (e) {
       print("error while fetching Country $e");
       Get.snackbar("Error", "Error recieving data : $e");
+    }
+  }
+
+  Future<void> fetchCountryForFavorites(
+      String favorite, CoordinatesController coordinatesController) async {
+    try {
+      Coord coord = await coordinatesController.fetchcoord(favorite);
+      final response = await http.get(Uri.parse(
+          "http://api.geonames.org/timezoneJSON?lat=${coord.lat}&lng=${coord.lon}&username=wahab_here_"));
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final country = responseData["countryName"];
+        FavCountry.add(country);
+      } else {
+        Get.snackbar(
+            "Error", "Error recieving data : ${responseData['error']}");
+      }
+    } catch (e) {
+      print("Error fetching country for $favorite: $e");
+      Get.snackbar("Error", "Error receiving data: $e");
     }
   }
 }

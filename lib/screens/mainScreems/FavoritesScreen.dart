@@ -38,7 +38,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     
     CoordinatesController coordinatesController =
                 Get.put(CoordinatesController());
-    SignUpController signUpController = Get.put(SignUpController());
+    
     WeatherController weatherController = Get.put(WeatherController());
     FavCountryController favCountryController = Get.put(FavCountryController());
     AddFavController addFavController = Get.put(AddFavController());
@@ -63,16 +63,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             
             final List<WeatherModel> weatherData =
                 await weatherController.getWeatherData(widget.sortOption.value);
-
-            
             EasyLoading.dismiss();
-            Get.off(() => MainScreen(
+            await Get.off(() => MainScreen(
                   isNight: widget.isNight,
                   dateTimeController: dateTimeController,
                   weatherData: weatherData,
                   coord: coord,
                   city: widget.sortOption.value,
-                )); // Navigate to the intro screen
+                ),transition: Transition.leftToRightWithFade); // Navigate to the intro screen
             return true;
           }
           return false;
@@ -141,9 +139,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                     EasyLoading.show();
                                     if (await validateCity(newFav.text)) {
                                       await addFavController
-                                          .addFavorite(newFav.text);
-
-                                          
+                                          .addFavorite(newFav.text);                                         
                                       List<WeatherModel> favWeatherList =
                                           await weatherController
                                               .getFavWeatherData();
