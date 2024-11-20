@@ -1,4 +1,3 @@
-// controllers/weather_controller.dart
 import 'dart:convert';
 
 import 'package:get/get.dart';
@@ -6,6 +5,7 @@ import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:http/http.dart' as http;
 import '../../models/weatherModel.dart';
 import '../../utils/Themes.dart';
+import 'coordinates.dart';
 
 class WeatherController extends GetxController {
   @override
@@ -16,6 +16,7 @@ class WeatherController extends GetxController {
 
   UserController userController = Get.find<UserController>();
   var weatherList = <WeatherModel>[].obs;
+    RxList<String> FavCountry = [''].obs;
   var favoriteWeatherList = <WeatherModel>[].obs;
 
   // Method to add weather data
@@ -57,12 +58,12 @@ class WeatherController extends GetxController {
         final weatherdata = WeatherModel.fromJson(responseData);
         addWeatherData(weatherdata);
       } else {
-        Get.snackbar('Error', responseData['error'],
+        Get.snackbar('Error in today', responseData['error'],
             snackPosition: SnackPosition.BOTTOM);
       }
     } catch (error) {
       print("forecase error : $error");
-      Get.snackbar('Error', "$error", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error in fetch toda', "$error", snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -80,12 +81,13 @@ class WeatherController extends GetxController {
         }
       } else {
         final responseData = jsonDecode(response.body);
-        Get.snackbar('Error', responseData['error'],
+        print('Error in fetch forecasr' + responseData['error']);
+        Get.snackbar('Error in fetch forecasr', responseData['error'],
             snackPosition: SnackPosition.BOTTOM);
       }
     } catch (error) {
       print("forecase error : $error");
-      Get.snackbar('Error', "$error", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error in fetch forecast', "$error", snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -94,15 +96,22 @@ class WeatherController extends GetxController {
     await fetchFavoritesWeather();
     return favoriteWeatherList.toList();
   }
+  List<String> getFavCounties() {
+    return FavCountry.toList();
+  }
 
   Future<void> fetchFavoritesWeather() async {
     UserController userController = Get.find<UserController>();
     final favLength = userController.user.value!.favorites.length;
+    CoordinatesController coordinatesController =
+        Get.put(CoordinatesController());
     try {
       List<Future<void>> futures = [];
 
+      FavCountry.clear();
+
       for (var i = 0; i < favLength; i++) {
-        futures.add(fetchFav(userController.user.value!.favorites[i]));
+        futures.add(fetchFav(userController.user.value!.favorites[i], coordinatesController));
       }
 
       await Future.wait(futures);
@@ -112,8 +121,13 @@ class WeatherController extends GetxController {
   }
 
   //based on city
-  Future<void> fetchFav(String city) async {
+  Future<void> fetchFav(String city, CoordinatesController coordinatesController) async {
     try {
+      Coord coord = await coordinatesController.fetchcoord(city);
+      final responseCountry = await http.get(Uri.parse(
+          "http://api.geonames.org/timezoneJSON?lat=${coord.lat}&lng=${coord.lon}&username=wahab_here_"));
+      final responseDataCountry = jsonDecode(responseCountry.body);
+
       final response = await http.get(
           Uri.parse("http://${AppConstant.domain}/weather/today?city=$city"));
 
@@ -121,13 +135,17 @@ class WeatherController extends GetxController {
       if (response.statusCode == 200) {
         final weatherdata = WeatherModel.fromJson(responseData);
         addFavWeatherData(weatherdata);
+        final country = responseDataCountry["countryName"];
+        FavCountry.add(country);
       } else {
         Get.snackbar('Error', responseData['error'],
             snackPosition: SnackPosition.BOTTOM);
       }
     } catch (error) {
-      print("forecase error : $error");
-      Get.snackbar('Error', "$error", snackPosition: SnackPosition.BOTTOM);
+      print("Favorite fetch error : $error");
+      Get.snackbar('Error in fetch fav', "$error", snackPosition: SnackPosition.BOTTOM);
     }
   }
+
+
 }

@@ -9,6 +9,11 @@ import 'package:timezone/data/latest_all.dart' as tz;
 void main() {
   tz.initializeTimeZones();
   Get.put(UserController());
+   WidgetsFlutterBinding.ensureInitialized();
+  // if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  //   setWindowMinSize(const Size(360, 700));  // Set minimum size
+  //   setWindowMaxSize(const Size(360, 700));  // Set maximum size to fix window
+  // }
   runApp(const MyApp());
   configLoading();
 }

@@ -29,7 +29,7 @@ class ForecastList extends StatelessWidget {
       // height: Get.height * 0.5,
       child: ListView.builder(
           itemCount: (forecast.length),
-          padding: const EdgeInsets.only(top: 8, left: 45),
+          padding: EdgeInsets.only(top: 8, left: (Get.width * 0.13)),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import '../../models/UserModel.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
 
 class GoogleAuthService {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile'],clientId: kIsWeb ? "923862509191-lss5f0b0vs8itucpv0o2enc4j12qmrtk.apps.googleusercontent.com" : null,);
   final UserController userController = Get.find<UserController>();
 
   Future<User?> initiateGoogleSignIn(BuildContext context) async {

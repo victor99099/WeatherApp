@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-
-import '../../../controllers/GlobalFunctions.dart';
+import 'package:weatherapp/controllers/SelectedCity.dart';
 import '../../../controllers/UserDataaController.dart';
-import '../../../controllers/weathrControllers/WeatherController.dart';
-import '../../../controllers/weathrControllers/coordinates.dart';
-import '../../../controllers/weathrControllers/dateTime.dart';
-import '../../../models/weatherModel.dart';
-import '../../../screens/mainScreems/mainScreen.dart';
+import '../../../screens/mainScreems/NavigationMenu.dart';
 
 class DropDownMenu extends StatelessWidget {
   const DropDownMenu(
@@ -23,16 +18,15 @@ class DropDownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     WeatherController weatherController =
-                  Get.put(WeatherController());
-    CoordinatesController coordinatesController =
-                  Get.put(CoordinatesController());
     final UserController userController = Get.find<UserController>();
+    SortOptionController sortOptionController = Get.put(SortOptionController());
 
     List<String> cities = userController.user.value!.favorites;
-    print(cities);
+
+    if (!cities.contains(sortOptionController.sortOption.value)) {
+      sortOptionController.setSortOption(cities[0]);
+    }
     return SizedBox(
-      // color: currentTheme.cardColor,
       width: Get.width * 0.35,
       height: Get.height * 0.06,
       child: Obx(() {
@@ -80,7 +74,7 @@ class DropDownMenu extends StatelessWidget {
             contentPadding: const EdgeInsets.only(left: 10, right: 10),
             fillColor: currentTheme.cardColor,
           ),
-          value: sortOption.value,
+          value: sortOptionController.sortOption.value,
           items: cities
               .map((option) => DropdownMenuItem<String>(
                     value: option,
@@ -89,37 +83,15 @@ class DropDownMenu extends StatelessWidget {
               .toList(),
           onChanged: (String? newValue) async {
             if (newValue != null) {
-              sortOption.value = newValue;
-
+              sortOptionController.setSortOption(newValue);
               EasyLoading.show();
-
-              
-              Coord coord =
-                  await coordinatesController.fetchcoord(sortOption.value);
-              DateTimeController dateTimeController =
-                  await Get.put(DateTimeController(sortOption.value));
-              await dateTimeController.getDateTimeOfCity(coord);
-              final currentdatetime =
-                  dateTimeController.getCurrentDateTime(coord);
-              final isNight = updateCurrentTime(currentdatetime);
-             
-              final List<WeatherModel> weatherData =
-                  await weatherController.getWeatherData(sortOption.value);
-
               EasyLoading.dismiss();
-              Get.offAll(() => MainScreen(
-                isNight: isNight,
-                    dateTimeController: dateTimeController,
-                    weatherData: weatherData,
-                    coord: coord,
-                    city: sortOption.value,
-                  ));
+              Get.offAll(() =>
+                  NavigationMenu(city: sortOptionController.sortOption.value));
             }
           },
         );
       }),
     );
   }
-
-
 }

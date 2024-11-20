@@ -1,16 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../controllers/FavCountryController.dart';
 import '../../controllers/weathrControllers/WeatherController.dart';
 import '../../models/weatherModel.dart';
-import '../../screens/mainScreems/FavoritesScreen.dart';
-import '../../screens/mainScreems/mainScreen.dart';
 import 'RightMain/DropDownMenu.dart';
+import 'RightMain/FavoriteButton.dart';
 import 'RightMain/SunriseAndSunset.dart';
 
 class RightMain extends StatelessWidget {
@@ -19,7 +16,6 @@ class RightMain extends StatelessWidget {
     required this.isNight,
     required this.currentTheme,
     required this.sortOption,
-    required this.widget,
     required this.todayWeather,
     required this.favCountryController
   });
@@ -27,9 +23,8 @@ class RightMain extends StatelessWidget {
   final ThemeData currentTheme;
   final RxString sortOption;
   final bool isNight;
-  final MainScreen widget;
   final WeatherModel todayWeather;
-  final FavCountryController favCountryController;
+  final WeatherController favCountryController;
 
   @override
   Widget build(BuildContext context) {
@@ -42,33 +37,7 @@ class RightMain extends StatelessWidget {
           children: [
             DropDownMenu(currentTheme: currentTheme, sortOption: sortOption, isNight: isNight,)
                 .marginOnly(top: Get.height * 0.1, left: Get.width * 0.09),
-            Container(
-              width: Get.width * 0.12,
-              height: Get.height * 0.055,
-              decoration: BoxDecoration(
-                  color: currentTheme.cardColor,
-                  border: Border.all(
-                    width: 2,
-                    color: currentTheme.primaryColorLight,
-                  ),
-                  borderRadius: BorderRadius.circular(13)),
-              child: IconButton(
-                  onPressed: () async {
-                    EasyLoading.show();
-                    List<WeatherModel> FavWeatherList =
-                        await weatherController.getFavWeatherData();
-                    await favCountryController.fetchCountries();
-                    List<String> favCountryList = favCountryController.getFavCounties();
-                    EasyLoading.dismiss();
-                    Get.to(
-                        () => FavoritesScreen(favWeatherList: FavWeatherList, favCountryList:favCountryList,sortOption: sortOption,isNight: isNight,),transition: Transition.rightToLeftWithFade);
-                  },
-                  icon: Icon(
-                    Iconsax.heart_add,
-                    size: 20,
-                    color: currentTheme.highlightColor,
-                  )),
-            ).marginOnly(top: 73, left: Get.width * 0.01)
+            FavoriteButton(currentTheme: currentTheme, weatherController: weatherController, favCountryController: favCountryController, sortOption: sortOption, isNight: isNight).marginOnly( top :Get.height * 0.1, left: Get.width * 0.01)
           ],
         ),
         SizedBox(
@@ -93,3 +62,4 @@ class RightMain extends StatelessWidget {
     );
   }
 }
+

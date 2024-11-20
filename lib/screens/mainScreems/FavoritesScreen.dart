@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:get/get.dart';
@@ -6,43 +9,96 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:weatherapp/controllers/AddFavController.dart';
-import 'package:weatherapp/controllers/FavCountryController.dart';
+import 'package:weatherapp/controllers/SelectedCity.dart';
 import 'package:weatherapp/controllers/UserDataaController.dart';
 import 'package:weatherapp/controllers/weathrControllers/WeatherController.dart';
 import 'package:weatherapp/models/weatherModel.dart';
-import 'package:weatherapp/screens/mainScreems/mainScreen.dart';
-
 import '../../controllers/GlobalFunctions.dart';
-import '../../controllers/weathrControllers/coordinates.dart';
-import '../../controllers/weathrControllers/dateTime.dart';
+import 'NavigationMenu.dart';
 
 class FavoritesScreen extends StatefulWidget {
-  List<String> favCountryList;
-  List<WeatherModel> favWeatherList;
-  RxString sortOption;
-  bool isNight;
-  FavoritesScreen(
-      {super.key,required this.sortOption, required this.favWeatherList, required this.favCountryList, required this.isNight});
+  FavoritesScreen({super.key});
 
   @override
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
+  final WeatherController weatherController = Get.put(WeatherController());
+  // final FavCountryController favCountryController =
+  //     Get.put(FavCountryController());
+  final AddFavController addFavController = Get.put(AddFavController());
+  final UserController userController = Get.find<UserController>();
+  final SortOptionController sortOptionController =
+      Get.put(SortOptionController());
+  NavigationController navigationController = Get.put(NavigationController());
+
+  List<String> favCountryList = [];
+  List<WeatherModel> favWeatherList = [];
+  var filteredCities = <String>[].obs; // Observable list of filtered cities
+  var allCities = <String>[].obs; // Observable list of all cities
+
+  bool isLoading = true;
+
+  TextEditingController newFav = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    navigationController.isLoading.value = true;
+    _fetchData();
+    _loadCitiesFromJson();
+    filteredCities.value = allCities;
+  }
+
+  Future<void> _loadCitiesFromJson() async {
+    try {
+      // Load JSON data from assets
+      final String jsonString =
+          await rootBundle.loadString('assets/citiess.json');
+      final List<dynamic> cityList = json.decode(jsonString);
+
+      // Update the observable list
+      allCities.value = cityList.cast<String>();
+    } catch (e) {
+      print("Error loading cities: $e");
+    }
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      favWeatherList = await weatherController.getFavWeatherData();
+      // await weatherController.fetchCountries();
+      favCountryList = weatherController.getFavCounties();
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      navigationController.isLoading.value = false;
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void filterCities(String query) {
+    filteredCities.value = allCities
+        .where((city) => city.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    
-    CoordinatesController coordinatesController =
-                Get.put(CoordinatesController());
-    
-    WeatherController weatherController = Get.put(WeatherController());
-    FavCountryController favCountryController = Get.put(FavCountryController());
-    AddFavController addFavController = Get.put(AddFavController());
-    UserController userController = Get.find<UserController>();
-
     final currentTheme = Theme.of(context);
 
-    TextEditingController newFav = TextEditingController();
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: currentTheme.canvasColor,
+        body: Center(
+            child: CircularProgressIndicator(
+          color: currentTheme.highlightColor,
+        )),
+      );
+    }
 
     return WillPopScope(
       onWillPop: () async {
@@ -50,23 +106,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           EasyLoading.show();
           final user = userController.user.value;
           if (user != null) {
-            
-            Coord coord =
-                await coordinatesController.fetchcoord(widget.sortOption.value);
-            DateTimeController dateTimeController =
-                Get.put(DateTimeController(widget.sortOption.value));
-            await dateTimeController.getDateTimeOfCity(coord);
-            
-            final List<WeatherModel> weatherData =
-                await weatherController.getWeatherData(widget.sortOption.value);
             EasyLoading.dismiss();
-            await Get.off(() => MainScreen(
-                  isNight: widget.isNight,
-                  dateTimeController: dateTimeController,
-                  weatherData: weatherData,
-                  coord: coord,
-                  city: widget.sortOption.value,
-                ),transition: Transition.leftToRightWithFade); // Navigate to the intro screen
+            await Get.offAll(
+                () => NavigationMenu(
+                    city: userController.user.value!.favorites[0]),
+                transition: Transition
+                    .leftToRightWithFade); // Navigate to the intro screen
             return true;
           }
           return false;
@@ -83,43 +128,135 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 backgroundColor: currentTheme.canvasColor,
                 // barrierColor: currentTheme.cardColor,
                 showDragHandle: true,
+                isScrollControlled: true,
+                useSafeArea: true,
                 // isScrollControlled: true,
                 context: context,
                 builder: (BuildContext context) {
                   return DraggableScrollableSheet(
-                      initialChildSize: 1,
+                      initialChildSize: 0.99,
+                      // minChildSize: 0.2,
+                      // maxChildSize: 0.9,
+
+                      expand: true,
                       builder: (context, scrollController) {
                         return Container(
-                          // height: Get.height,
+                          height: Get.height * 0.8,
                           color: currentTheme.canvasColor,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              TextFormField(
-                                style: TextStyle(
-                                    color: currentTheme.primaryColorDark),
-                                controller: newFav,
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: currentTheme.cardColor,
-                                    hintText: "Enter City",
-                                    hintStyle: TextStyle(
-                                        color: currentTheme.primaryColorLight),
-                                    prefixIcon: Icon(
-                                      Iconsax.map5,
-                                      color: currentTheme.primaryColorLight,
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            color: currentTheme.primaryColor,
-                                            width: 1.5)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            color: currentTheme
-                                                .primaryColorLight))),
-                              ).pOnly(left: 15, right: 15),
+                              Column(
+                                children: [
+                                  TextFormField(
+                                    onChanged: (query) => filterCities(query),
+                                    style: TextStyle(
+                                        color: currentTheme.primaryColorDark),
+                                    controller: newFav,
+                                    decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: currentTheme.cardColor,
+                                        hintText: "Enter City",
+                                        hintStyle: TextStyle(
+                                            color:
+                                                currentTheme.primaryColorLight),
+                                        prefixIcon: Icon(
+                                          Iconsax.map5,
+                                          color: currentTheme.primaryColorLight,
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color:
+                                                    currentTheme.primaryColor,
+                                                width: 1.5)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: currentTheme
+                                                    .primaryColorLight))),
+                                  ).pOnly(left: 15, right: 15),
+                                  Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: Text(
+                                      "Suggested Results",
+                                      style: TextStyle(
+                                          color: currentTheme.primaryColor,
+                                          fontFamily:
+                                              GoogleFonts.poppins().fontFamily,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                    ).pOnly(top: 7, left: 20),
+                                  ),
+                                  Container(
+                                    width: Get.width,
+                                    height: Get.height * 0.6,
+                                    child: Obx(() {
+                                      final isFavCityFound = filteredCities.any(
+                                          (city) =>
+                                              city.toLowerCase() ==
+                                              newFav.text.toLowerCase());
+
+                                      final citiesToDisplay =
+                                          filteredCities.take(10).toList();
+                                      return ListView.builder(
+                                        padding: EdgeInsets.all(0),
+                                        shrinkWrap: true,
+                                        itemCount: filteredCities.isEmpty
+                                            ? (isFavCityFound ? 0 : 1)
+                                            : citiesToDisplay.length,
+                                        itemBuilder: (context, index) {
+                                          if (filteredCities.isEmpty) {
+                                            return Card(
+                                              elevation: 0,
+                                              color: currentTheme.cardColor,
+                                              // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: currentTheme.primaryColor)),
+                                              child: Text(
+                                                "No cities found",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: currentTheme
+                                                        .primaryColor),
+                                              ).pOnly(left: 1, top: 10),
+                                            );
+                                          }
+                                          if (newFav.text.toLowerCase() ==
+                                              filteredCities[index]
+                                                  .toLowerCase()) {
+                                            return const SizedBox
+                                                .shrink(); // Skip the city that matches the selected one
+                                          }
+
+                                          return Card(
+                                            color: currentTheme.cardColor,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                side: BorderSide(
+                                                    color: currentTheme
+                                                        .primaryColor)),
+                                            child: ListTile(
+                                              title: Text(filteredCities[index],
+                                                  style: TextStyle(
+                                                      color: currentTheme
+                                                          .primaryColor)),
+                                              onTap: () {
+                                                newFav.text =
+                                                    filteredCities[index];
+                                                final query = newFav.text;
+                                                filterCities(query);
+                                                    
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }),
+                                  ).pOnly(left: 15, top: 5, right: 15),
+                                ],
+                              ),
                               TextButton(
                                   style: ButtonStyle(
                                       fixedSize: WidgetStatePropertyAll(Size(
@@ -135,17 +272,26 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                     EasyLoading.show();
                                     if (await validateCity(newFav.text)) {
                                       await addFavController
-                                          .addFavorite(newFav.text);                                         
+                                          .addFavorite(newFav.text);
                                       List<WeatherModel> favWeatherList =
                                           await weatherController
                                               .getFavWeatherData();
-                                      widget.favWeatherList = favWeatherList;
-                                      await favCountryController
-                                          .fetchCountries();
+                                      favWeatherList = favWeatherList;
+                                      // await favCountryController
+                                      //     .fetchCountries();
 
                                       List<String> favCountryList =
-                                          favCountryController.getFavCounties();
-                                      widget.favCountryList = favCountryList;
+                                          weatherController.getFavCounties();
+                                      favCountryList = favCountryList;
+                                      sortOptionController.setSortOption(
+                                          favWeatherList[0].city);
+                                      Get.offAll(
+                                          () => NavigationMenu(
+                                                city: favWeatherList[0].city,
+                                                selectedIndex: 1,
+                                              ),
+                                          transition:
+                                              Transition.rightToLeftWithFade);
                                       setState(() {});
                                       EasyLoading.dismiss();
                                       newFav.text = '';
@@ -197,7 +343,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
         ),
         body: ListView.builder(
-            itemCount: widget.favWeatherList.length,
+            itemCount: favWeatherList.length,
             itemBuilder: (BuildContext context, index) {
               return SwipeActionCell(
                 backgroundColor: currentTheme.canvasColor,
@@ -226,27 +372,27 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     widthSpace: Get.width / 3,
                     color: Colors.transparent,
                     onTap: (handler) async {
-                      if (widget.favWeatherList.length == 1) {
+                      if (favWeatherList.length == 1) {
                         Get.snackbar(
                             "Error", "Atleast one favorite should be there");
                       } else {
                         EasyLoading.show();
+
                         await addFavController.removeFavorite(
-                            widget.favWeatherList[index].city.toUpperCase());
-                        List<WeatherModel> favWeatherList =
+                            favWeatherList[index].city.toUpperCase());
+
+                        favWeatherList =
                             await weatherController.getFavWeatherData();
-                        widget.favWeatherList = favWeatherList;
-                        await favCountryController.fetchCountries();
-                        List<String> favCountryList =
-                            favCountryController.getFavCounties();
-                        widget.favCountryList = favCountryList;
+                        // await favCountryController.fetchCountries();
+                        favCountryList = weatherController.getFavCounties();
+                        favCountryList = favCountryList;
                         setState(() {});
                         EasyLoading.dismiss();
                       }
                     },
                   ),
                 ],
-                key: ObjectKey(widget.favWeatherList[index].city),
+                key: ObjectKey(favWeatherList[index].city),
                 child: Container(
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   width: Get.width * 0.8,
@@ -262,34 +408,32 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.favWeatherList[index].city,
+                              favWeatherList[index].city,
                               style: TextStyle(
                                   fontSize: 22,
                                   color: Colors.white,
                                   fontFamily: GoogleFonts.poppins().fontFamily),
                             ),
                             Text(
-                                "${widget.favWeatherList[index].temperature.toStringAsFixed(0)}°C",
+                                "${favWeatherList[index].temperature.toStringAsFixed(0)}°C",
                                 style: TextStyle(
                                     fontSize: 22,
                                     color: Colors.white,
                                     fontFamily:
                                         GoogleFonts.poppins().fontFamily))
                           ],
-                        ).pOnly(left: 25, right: 25, top: 18),
+                        ).pOnly(left: 25, right: 25, top: Get.height * 0.017),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.favCountryList[index],
+                              favCountryList[index],
                               style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white,
                                   fontFamily: GoogleFonts.poppins().fontFamily),
                             ),
-                            Text(
-                                widget.favWeatherList[index].description
-                                    .capitalized,
+                            Text(favWeatherList[index].description.capitalized,
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,

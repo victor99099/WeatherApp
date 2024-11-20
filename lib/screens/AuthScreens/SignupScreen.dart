@@ -94,7 +94,7 @@ class SignUp extends StatelessWidget {
                 seconfText: "Sign-in",
                 currentTheme: currentTheme,
                 onTap: () {
-                  Get.to(() => LogInScreen());
+                  Get.offAll(() => LogInScreen());
                 },
               ).marginOnly(top: Get.width*0.08, bottom: Get.width*0.1)
             ],

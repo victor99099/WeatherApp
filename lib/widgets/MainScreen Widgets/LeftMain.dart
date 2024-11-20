@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:weatherapp/controllers/UnitController.dart';
 
 import '../../controllers/weathrControllers/coordinates.dart';
 import '../../controllers/weathrControllers/dateTime.dart';
 import '../../models/weatherModel.dart';
 
 class LeftMain extends StatelessWidget {
-  const LeftMain({
+  LeftMain({
     super.key,
     required this.currentdatetime,
     required this.todayWeather,
@@ -19,6 +20,8 @@ class LeftMain extends StatelessWidget {
   final currentDateTime currentdatetime;
   final WeatherModel todayWeather;
   final Coord coord;
+
+  final UnitController unitController = Get.put(UnitController());
 
   @override
   Widget build(BuildContext context) {
@@ -42,16 +45,21 @@ class LeftMain extends StatelessWidget {
                 fontSize: 12,
                 fontFamily: GoogleFonts.poppins().fontFamily,
                 color: Colors.white),
-          ).pOnly(left: Get.width * 0.01),
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text("${todayWeather.temperature.toStringAsFixed(0)}°C",
-                      style: TextStyle(
-                          fontSize: 33,
-                          fontFamily: GoogleFonts.poppins().fontFamily,
-                          color: Colors.white))
-                  .pOnly(top: Get.width * 0.01),
+              Obx(
+                () => SizedBox(
+                  child: Text( unitController.selectedValue.value == 1 ?
+                          "${todayWeather.temperature.toStringAsFixed(0)}°C" : "${(((todayWeather.temperature)*9/5)+32).toStringAsFixed(0)}°F",
+                          style: TextStyle(
+                              fontSize: 33,
+                              fontFamily: GoogleFonts.poppins().fontFamily,
+                              color: Colors.white))
+                      .pOnly(top: Get.width * 0.01),
+                ),
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -72,26 +80,39 @@ class LeftMain extends StatelessWidget {
                         color: Colors.white),
                   )
                 ],
-              ).pOnly(right: 10)
+              ).pOnly(left: 10)
             ],
           ).pOnly(top: Get.width * 0.02),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                todayWeather.description.capitalized,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    color: Colors.white),
-              ),
-              const Icon(
-                Iconsax.cloud,
-                color: Colors.white,
-                size: 18,
-              ).pOnly(left: Get.width * 0.01)
-            ],
+          SizedBox(
+            width: Get.width * 0.3, // Total width of the parent
+            child: Row(
+              mainAxisSize: MainAxisSize
+                  .min, // Makes the Row take only the space it needs
+              children: [
+                // Flexible widget ensures Text takes only as much width as it needs
+                Flexible(
+                  fit:
+                      FlexFit.loose, // Text will occupy only the space it needs
+                  child: Text(
+                    todayWeather.description.capitalized,
+                    style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+
+                // Icon takes 20% of the width of the parent
+                const Icon(
+                  Iconsax.cloud,
+                  color: Colors.white,
+                  size: 18,
+                ).pOnly(left: 10),
+              ],
+            ),
           ),
           Text(
             "Feels Like",
@@ -102,7 +123,8 @@ class LeftMain extends StatelessWidget {
                 color: Colors.white),
           ).pOnly(top: Get.width * 0.03),
           Text(
-            "${todayWeather.feelsLike.toStringAsFixed(0)} °C",
+            unitController.selectedValue.value == 1 ?
+                          "${todayWeather.feelsLike.toStringAsFixed(0)}°C" : "${(((todayWeather.feelsLike)*9/5)+32).toStringAsFixed(0)}°F",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

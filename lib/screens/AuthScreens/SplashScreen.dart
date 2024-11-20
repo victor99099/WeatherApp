@@ -1,18 +1,15 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:weatherapp/controllers/SiginControllers/GoogleSignIn.dart';
 import 'package:weatherapp/screens/AuthScreens/SignInScreen.dart';
-import 'package:weatherapp/screens/mainScreems/mainScreen.dart';
-
-import '../../controllers/GlobalFunctions.dart';
+import 'package:weatherapp/screens/AuthScreens/intro.dart';
+import 'package:weatherapp/screens/mainScreems/NavigationMenu.dart';
 import '../../controllers/UserDataaController.dart';
 import '../../controllers/weathrControllers/WeatherController.dart';
 import '../../controllers/weathrControllers/coordinates.dart';
-import '../../controllers/weathrControllers/dateTime.dart';
-import '../../models/weatherModel.dart';
 import '../../utils/Themes.dart';
 
 class Splashscreen extends StatefulWidget {
@@ -27,7 +24,7 @@ class _SplashscreenState extends State<Splashscreen> {
   CoordinatesController coordinatesController =
       Get.put(CoordinatesController());
   final UserController userController = Get.put(UserController());
-
+  GoogleAuthService googleAuthService = GoogleAuthService();
   @override
   void initState() {
     super.initState();
@@ -69,27 +66,12 @@ class _SplashscreenState extends State<Splashscreen> {
         },
       );
     }
-
+    // googleAuthService.logout();
     // Navigate based on login status
     if (isLoggedIn) {
-      final user = userController.user.value!;
-      Coord coord = await coordinatesController.fetchcoord(user.favorites[0]);
-      DateTimeController dateTimeController =
-          Get.put(DateTimeController(user.favorites[0]));
-      await dateTimeController.getDateTimeOfCity(coord);
-      final List<WeatherModel> weatherData =
-          await weatherController.getWeatherData(user.favorites[0]);
-      final currentdatetime = dateTimeController.getCurrentDateTime(coord);
-      final isNight = updateCurrentTime(currentdatetime);
-      Get.offAll(() => MainScreen(
-            weatherData: weatherData,
-            coord: coord,
-            dateTimeController: dateTimeController,
-            isNight: isNight,
-            city: user.favorites[0],
-          ));
+      Get.offAll(() => NavigationMenu(city : userController.user.value!.favorites[0]));
     } else {
-      Get.offAll(() => LogInScreen());
+      Get.offAll(() => IntroScreen());
     }
   }
 

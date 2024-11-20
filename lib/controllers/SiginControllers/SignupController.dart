@@ -60,12 +60,10 @@ class SignUpController extends GetxController {
         return false;
       }
     } catch (error) {
-      Get.snackbar('Error', "$error",
+      Get.snackbar('Error', "${error}",
           snackPosition: SnackPosition.BOTTOM);
       print('Error Signup : $error');
       return false;
     }
   }
-
-  
 }

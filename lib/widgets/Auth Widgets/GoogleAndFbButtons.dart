@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:weatherapp/controllers/weathrControllers/coordinates.dart';
-import 'package:weatherapp/controllers/weathrControllers/dateTime.dart';
-import 'package:weatherapp/screens/mainScreems/mainScreen.dart';
-
-import '../../controllers/GlobalFunctions.dart';
+import 'package:weatherapp/screens/mainScreems/NavigationMenu.dart';
 import '../../controllers/SiginControllers/GoogleSignIn.dart';
 import '../../controllers/UserDataaController.dart';
-import '../../controllers/weathrControllers/WeatherController.dart';
-import '../../models/weatherModel.dart';
+
 
 class GoogleAndFb extends StatelessWidget {
   const GoogleAndFb({
@@ -22,11 +17,8 @@ class GoogleAndFb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WeatherController weatherController =
-                     Get.put(WeatherController());
-    CoordinatesController coordinatesController =
-                    Get.put(CoordinatesController());
-    
+
+
     final UserController userController = Get.find<UserController>();
     final GoogleAuthService authService = GoogleAuthService();
     return Row(
@@ -39,23 +31,8 @@ class GoogleAndFb extends StatelessWidget {
               await authService.initiateGoogleSignIn(context);
               final user = userController.user.value;
               if (user != null) {
-                print("username is : ${user.username}");
-                Coord coord =
-                    await coordinatesController.fetchcoord(user.favorites[0]);
-                DateTimeController dateTimeController =
-                    Get.put(DateTimeController(user.favorites[0]));
-                await dateTimeController.getDateTimeOfCity(coord);
-                final List<WeatherModel> weatherData =
-                    await weatherController.getWeatherData(user.favorites[0]);
-                final currentdatetime =
-                    dateTimeController.getCurrentDateTime(coord);
-                final isNight = updateCurrentTime(currentdatetime);
                 EasyLoading.dismiss();
-                Get.off(() => MainScreen(
-                  isNight: isNight,
-                      dateTimeController: dateTimeController,
-                      weatherData: weatherData,
-                      coord: coord,
+                Get.off(() => NavigationMenu(
                       city: user.favorites[0],
                     )); // Navigate to the intro screen
               }
