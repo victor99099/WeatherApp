@@ -1,6 +1,13 @@
 # weatherapp
 
-A new Flutter project.
+front-End - Flutter MVC Architecutre
+Back-end - Node/Express
+DBMS - AWS Dynamodb 
+HOSTING - AWS EC2 Instance 
+STORAGE - Redis 
+Auth - AWS Cognito & GoogleOAuth
+
+APK : https://drive.google.com/file/d/1rUIyLihhRoyziC6leYigKQ5TekhOS0aN/view?usp=sharing
 
 ## Getting Started
 
